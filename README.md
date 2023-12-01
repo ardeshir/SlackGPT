@@ -1,6 +1,6 @@
 # SlackGPT
 
-![alt SlackGPT ] (SlackGPT_hack-together.png)
+![alt SlackGPT ](SlackGPT_hack-together.png)
 
 ![alt Arch Diagram ](Networking_Function_GPT4.png)
 
