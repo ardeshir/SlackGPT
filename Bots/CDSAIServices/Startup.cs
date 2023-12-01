@@ -3,16 +3,32 @@
 //
 // Generated with EchoBot .NET Template version v4.17.1
 
+using System;
+using System.Data;
+using System.Net.Http;
+
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.ApplicationInsights;
+using Microsoft.Bot.Builder.Integration.ApplicationInsights.Core;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
-using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
+using Polly.Extensions.Http;
 
-namespace EchoBot
+// using CDSAIServices.Services.OpenAIService;
+using CDSAIServices.Dialogs.OpenAI;
+using CDSAIServices.Services;
+using CDSAIServices.Domain;
+using CDSAIServices.Dialogs;
+using Microsoft.Bot.Connector.Authentication;
+
+namespace CDSAIServices
 {
     public class Startup
     {
@@ -31,14 +47,35 @@ namespace EchoBot
                 options.SerializerSettings.MaxDepth = HttpHelper.BotMessageSerializerSettings.MaxDepth;
             });
 
+            services.AddHttpClient(nameof(OpenAIService), httpClient =>
+            {
+                httpClient.BaseAddress = new Uri("https://<ADD YOUR FUNCTION NAME HERE>azurewebsites.net/api/");
+                httpClient.Timeout = TimeSpan.FromSeconds(300);
+                httpClient.DefaultRequestHeaders.Add("x-functions-key", "<ADD YOUR FUNCTION KEY HERE>");
+            }).AddPolicyHandler(GetRetryPolicy());
+
             // Create the Bot Framework Authentication to be used with the Bot Adapter.
             services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
+
+
+            services.AddSingleton<IStorage, MemoryStorage>();
+
+            services.AddSingleton<UserState>();
+            services.AddSingleton<ConversationState>();
+
+            services.AddSingleton<IBaseService, BaseService>();
+            services.AddSingleton<IOpenAIService, OpenAIService>();
+
+            //services.AddSingleton<MainDialog>();
+            services.AddSingleton<OpenAIDialog>();
 
             // Create the Bot Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, Bots.EchoBot>();
+            services.AddTransient<IBot, Bots.CDSAIServices<OpenAIDialog>>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +97,14 @@ namespace EchoBot
                 });
 
             // app.UseHttpsRedirection();
+        }
+
+        static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+        {
+            return HttpPolicyExtensions
+                .HandleTransientHttpError()
+                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
+                .WaitAndRetryAsync(6, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
         }
     }
 }
