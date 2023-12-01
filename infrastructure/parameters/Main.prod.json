@@ -1,0 +1,100 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "East US"
+        },
+        "envName": {
+            "value": "prod"
+        }, 
+        "functionApp" : {
+            "value" : "cds-openai-function"
+        },
+        "storageAccount" : {
+            "value" :  ""
+        },
+        "appServicePlan": {
+            "value": ""
+        },
+        "vnetName" : {
+            "value" :  ""
+        },
+        "subnetName" : {
+            "value" :  ""
+        },
+        "keyVaultName" : {
+            "value" :  ""
+        },
+        "keyVaultSecretName" : {
+            "value" :  ""
+        },
+        "appIdObjectId" : {
+            "value" :  ""
+        },
+        "backends": {
+          "value": [
+            {
+              "name": "prod",
+              "url": ""
+            },
+            {
+              "name": "prod-we",
+              "url": ""
+            }
+          ]
+        },
+        "apis": {
+          "value": [
+            {
+              "name": "prod",
+              "displayName": "Unity Prod",
+              "path": "prod",
+              "serviceUrl": "",
+              "subscriptionRequired": false,
+              "policy": "<policies><inbound><base /><choose><when condition=\"@(&quot;westeurope&quot;.Equals(context.Request.Headers.GetValueOrDefault(&quot;Region-Override&quot;), StringComparison.OrdinalIgnoreCase))\"><set-backend-service backend-id=\"cnc-prod-we\" /></when><when condition=\"@(&quot;eastus&quot;.Equals(context.Request.Headers.GetValueOrDefault(&quot;Region-Override&quot;), StringComparison.OrdinalIgnoreCase))\"><set-backend-service backend-id=\"cnc-prod\" /></when><when condition=\"@(&quot;West Europe&quot;.Equals(context.Deployment.Region, StringComparison.OrdinalIgnoreCase))\"><set-backend-service backend-id=\"cnc-prod-we\" /></when><otherwise><set-backend-service backend-id=\"cnc-prod\" /></otherwise></choose></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "admin-prod",
+              "displayName": "UnityAdmin Prod",
+              "path": "admin/prod",
+              "serviceUrl": "",
+              "subscriptionRequired": false,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "binservice-prod",
+              "displayName": "BinService Prod",
+              "path": "binservice",
+              "serviceUrl": "",
+              "subscriptionRequired": true,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "core-formulaoptimizer-prod",
+              "displayName": "Core FormulaOptimizer Prod",
+              "path": "prod/coreformulaoptimizer",
+              "serviceUrl": "",
+              "subscriptionRequired": true,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "corecalc-prod",
+              "displayName": "CoreCalc Prod",
+              "path": "corecalc/prod",
+              "serviceUrl": "",
+              "subscriptionRequired": true,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            }
+          ]
+        },
+        "dns": {
+          "value": [
+            {
+              "name": "",
+              "address": ""
+            }
+          ]
+        }
+    }
+}

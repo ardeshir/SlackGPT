@@ -1,0 +1,5 @@
+<policies>
+  <backend>
+    <forward-request />
+  </backend>
+</policies>

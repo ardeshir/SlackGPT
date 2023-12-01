@@ -1,0 +1,18 @@
+# infrastructure copy
+jobs:
+  - job: infrastructure
+    displayName: Publish Infrastructure
+    pool:
+      vmImage: "ubuntu-20.04"
+    steps:
+      - task: CopyFiles@2
+        inputs:
+          SourceFolder: "infrastructure"
+          Contents: "**"
+          TargetFolder: "$(System.DefaultWorkingDirectory)/infrastructure"
+        displayName: Copy infrastructure files
+      - task: PublishPipelineArtifact@1
+        inputs:
+          path: "$(System.DefaultWorkingDirectory)/infrastructure"
+          artifact: "infrastructure"
+        displayName: Publish infrastructure files

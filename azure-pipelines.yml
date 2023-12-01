@@ -1,0 +1,67 @@
+trigger:
+  - main
+  - dev
+
+pool:
+  vmImage: windows-latest
+
+stages:
+  - stage: Infrastructure
+    displayName: Publish Infrastructure
+    jobs:
+      - template: infrastructure/shared/infrastructure.yml
+  - stage: Development
+    dependsOn: Infrastructure 
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+    displayName: Create and Deploy Development App
+    jobs:
+      - deployment: DeployInfra
+        workspace:
+          clean: all
+        displayName: Create Development Function App
+        environment: TechOps-Unity-Development
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: infrastructure/shared/azure-deploy.yml
+                  parameters:
+                    azureSubscription:  FSDI-Techops-SharedService-ServiceConnection 
+                    resourceGroupName: "rg-azure-openai-func"
+                    deploymentResource: "Main"
+                    location: "eastus"
+                    envName: "dev"
+                - template: functionapp-deploy.yml
+                  parameters:
+                    azureSubscription: FSDI-Techops-SharedService-ServiceConnection  
+                    functionAppName: "cds-openai-function"
+                    resourceGroupName: "rg-azure-openai-func"
+                    envName: "dev"
+  - stage: Prod
+    dependsOn: Infrastructure 
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    displayName: Create and Deploy Prod App
+    jobs:
+      - deployment: DeployInfra
+        workspace:
+          clean: all
+        displayName: Create Prod Function App
+        environment: TechOps-Unity-Prod
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: infrastructure/shared/azure-deploy.yml
+                  parameters:
+                    azureSubscription: FSDI-Techops-SharedService-ServiceConnection 
+                    resourceGroupName: "rg-azure-openai-func"
+                    location: "eastus"
+                    envName: "prod"
+                - template: functionapp-deploy.yml
+                  parameters:
+                    azureSubscription: FSDI-Techops-SharedService-ServiceConnection 
+                    functionAppName: "cds-openai-function"
+                    resourceGroupName: "rg-azure-openai-func"
+                    envName: "prod"

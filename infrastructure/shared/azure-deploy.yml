@@ -1,0 +1,36 @@
+# common deploy (CD) process for all stages
+parameters:
+  - name: azureSubscription
+    type: string
+    default: ""
+  - name: coreResourceGroupName
+    type: string
+    default: ""
+  - name: resourceGroupName
+    type: string
+    default: ""
+  - name: location
+    type: string
+    default: "eastus"
+  - name: deploymentMode
+    type: string
+    default: "Validate"
+  - name: deploymentResource
+    type: string
+    default: "Main"
+  - name: envName
+    type: string
+    default: "dev"
+
+steps:
+  - task: AzureCLI@2
+    inputs:
+      scriptType: "bash"
+      azureSubscription: ${{parameters.azureSubscription}}
+      scriptLocation: "inlineScript"
+      inlineScript: |
+        az deployment group create \
+         -g ${{parameters.resourceGroupName}} \
+         -f "$(System.DefaultWorkingDirectory)/../infrastructure/bicep/${{parameters.deploymentResource}}.bicep" \
+         --parameters "$(System.DefaultWorkingDirectory)/../infrastructure/parameters/${{parameters.deploymentResource}}.${{parameters.envName}}.json"
+

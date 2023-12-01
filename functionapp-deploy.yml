@@ -1,0 +1,55 @@
+parameters:
+  - name: azureSubscription
+    type: string
+    default: ""
+  - name: functionAppName
+    type: string
+    default: ""
+  - name: resourceGroupName
+    type: string
+    default: ""
+  - name: userId
+    type: string
+    default: ""
+  - name: buildConfiguration
+    type: string
+    default: 'Release'
+  - name: envName
+    type: string
+
+
+steps:
+  - task: UseDotNet@2
+    displayName: Use .NET 6.0
+    inputs:
+      packageType: 'sdk'
+      version: '6.0.x'
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      command: 'build'
+      projects: '**/*.csproj'
+      arguments: '--configuration ${{parameters.buildConfiguration}}'
+  - task: MicrosoftSecurityDevOps@1
+  - task: DotNetCoreCLI@2
+    displayName: Publish
+    inputs:
+      command: 'publish'
+      publishWebProjects: false
+      projects: '**/*.csproj'
+      arguments: '--configuration ${{parameters.buildConfiguration}} --output $(Build.ArtifactStagingDirectory)'
+      zipAfterPublish: True
+
+  - task: AzureFunctionApp@1
+    inputs:
+      azureSubscription: ${{parameters.azureSubscription}}
+      appType: 'functionAppLinux'
+      appName: ${{parameters.functionAppName}}-${{parameters.envName}}
+      package: '$(Build.ArtifactStagingDirectory)/*.zip'
+      runtimeStack: DOTNET|6.0
+      deploymentMethod: 'auto'

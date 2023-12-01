@@ -1,0 +1,104 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "East US"
+        },
+        "envName": {
+            "value": "dev"
+        }, 
+        "functionApp" : {
+            "value" : "cds-openai-function"
+        },
+        "storageAccount" : {
+            "value" :  ""
+        },
+        "appServicePlan": {
+            "value": ""
+        },
+        "vnetName" : {
+            "value" :  ""
+        },
+        "subnetName" : {
+            "value" :  ""
+        },
+        "keyVaultName" : {
+            "value" :  ""
+        },
+        "keyVaultSecretName" : {
+            "value" :  ""
+        },
+        "appIdObjectId" : {
+            "value" :  ""
+        },
+        "backends": {
+          "value": [
+            {
+              "name": "cnc-dev",
+              "url": ""
+            }
+          ]
+        },
+        "apis": {
+          "value": [
+            {
+              "name": "dev",
+              "displayName": "Unity Dev",
+              "path": "dev",
+              "serviceUrl": "",
+              "subscriptionRequired": false,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "admin-dev",
+              "displayName": "UnityAdmin Dev",
+              "path": "admin/dev",
+              "serviceUrl": "",
+              "subscriptionRequired": false,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "binservice-dev",
+              "displayName": "BinService Dev",
+              "path": "binservice/dev",
+              "serviceUrl": "",
+              "subscriptionRequired": true,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "core-formulaoptimizer-dev",
+              "displayName": "Core FormulaOptimizer Dev",
+              "path": "coreformulaoptimizer/dev",
+              "serviceUrl": "",
+              "subscriptionRequired": true,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "corecalc-dev",
+              "displayName": "CoreCalc Dev",
+              "path": "corecalc/dev",
+              "serviceUrl": "",
+              "subscriptionRequired": true,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            },
+            {
+              "name": "mapi-dev",
+              "displayName": "MAPI Dev",
+              "path": "mapi-dev",
+              "serviceUrl": "",
+              "subscriptionRequired": false,
+              "policy": "<policies><inbound><base /></inbound><backend><base /></backend><outbound><base /></outbound><on-error><base /></on-error></policies>"
+            }
+          ]
+        },
+        "dns": {
+          "value": [
+            {
+              "name": "",
+              "address": ""
+            }
+          ]
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "AppName": "AzureOpenAI",
+    "AppGroup": "AzureOpenAI",
+    "AppEnvironment": "Shared",
+    "Name": "AzureOpenAI-Func",
+    "ITOwnerEmail": "fs_admin@cargill.com",
+    "BillingCode": "8556470",
+    "TaggingVersion": "1.0.1"
+  }
+  
