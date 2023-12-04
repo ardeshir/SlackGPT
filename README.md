@@ -4,6 +4,8 @@
 
 ![alt Arch Diagram ](Networking_Function_GPT4.png)
 
+![alt SlackGPT ](slackgpt.png)
+
 ### C# code Azure Functions and Azure OpenAI API to generate text based on the provided prompt:
 
 ```
